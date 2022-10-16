@@ -11,3 +11,5 @@
 ![插值法](https://cdn.jsdelivr.net/gh/FcAYH/Images/2022/10/17/f544214be590fe15b2743ea6172ba448.png)
 
 ![扫描法](https://cdn.jsdelivr.net/gh/FcAYH/Images/2022/10/17/936f3e5ccd1d7e30daf3b1a142241034.png)
+
+发现在这个网站介绍了很多相关算法，打算尝试都去实现以下 ：[www.edepot.com/algorithm.html](http://www.edepot.com/algorithm.html)
