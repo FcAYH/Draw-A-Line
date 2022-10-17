@@ -1,5 +1,7 @@
 # Draw-A-Line
 
+算法详细介绍: [Docs](https://github.com/FcAYH/Draw-A-Line/blob/master/Assets/Document/draw-a-line.md)
+
 在unity中尝试使用网格拟合直线
 
 忘记是哪家的笔试题了，考到了这个知识点，当时求的是直线一共经过了多少格子，
