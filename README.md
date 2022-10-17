@@ -13,8 +13,14 @@
 
 效果如下：
 
-![插值法](https://cdn.jsdelivr.net/gh/FcAYH/Images/2022/10/17/f544214be590fe15b2743ea6172ba448.png)
+![插值法](https://cdn.jsdelivr.net/gh/FcAYH/Images/2022/10/17/48f577f58c6936a2ca82696b89ca4067.png)
 
 ![扫描法](https://cdn.jsdelivr.net/gh/FcAYH/Images/2022/10/17/936f3e5ccd1d7e30daf3b1a142241034.png)
 
-发现在这个网站介绍了很多相关算法，打算尝试都去实现一下 ：[www.edepot.com/algorithm.html](http://www.edepot.com/algorithm.html)
+在这个网站介绍了一个效率较高？的算法：[www.edepot.com/algorithm.html](http://www.edepot.com/algorithm.html)
+
+目前实现了其三种基本计算方式：Division，Multiplication，Addition
+
+效果如下：
+
+![EFLA](https://cdn.jsdelivr.net/gh/FcAYH/Images/2022/10/17/4a31823698c982b97c8b1f99ff7916e0.png)
