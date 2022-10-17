@@ -58,8 +58,8 @@ namespace DrawALine.Logic
                 for (int i = 0; i < _pointCount; i++)
                 {
                     Vector2 pos = new Vector2();
-                    pos.x = start.x + (_end.x - start.x) * i / (_pointCount - 1);
-                    pos.y = start.y + (_end.y - start.y) * i / (_pointCount - 1);
+                    pos.x = _start.x + (_end.x - _start.x) * i / (_pointCount - 1);
+                    pos.y = _start.y + (_end.y - _start.y) * i / (_pointCount - 1);
                     var point = _pointList[i];
                     point.transform.position = pos;
                     point.SetActive(true);
