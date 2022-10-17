@@ -39,6 +39,7 @@ namespace DrawALine.Logic
         // Start is called before the first frame update
         void Start()
         {
+            Debug.Log("Floor: -4.6: " + Mathf.FloorToInt(-4.6f));
             GenerateNewMap(Row, Column);
         }
 
@@ -98,7 +99,7 @@ namespace DrawALine.Logic
         }
 
         // 将世界坐标转换为网格坐标，即_grids数组下标
-        private (int, int) WorldPointToGrid(int posX, int posY)
+        private (int, int) WorldPointToGrid(float posX, float posY)
         {
             int x = (int)(Mathf.Floor(posX) - LeftBottomPoint.x);
             int y = (int)(Mathf.Floor(posY) - LeftBottomPoint.y);
@@ -110,6 +111,13 @@ namespace DrawALine.Logic
         {
             // Debug.Log(x + " " + y);
             _grids[x, y].color = Color.gray;
+        }
+
+        // 将给定网格坐标的网格染成灰色
+        private void ColorAGrid((int, int) tuple)
+        {
+            // Debug.Log(x + " " + y);
+            _grids[tuple.Item1, tuple.Item2].color = Color.gray;
         }
 
         // 给定网格坐标，判断直线是否经过该网格（默认仅经过顶点不算）
@@ -240,6 +248,171 @@ namespace DrawALine.Logic
                                 gridQ.Enqueue((worldPointX, worldPointY));
                             }
                         }
+                    }
+                }
+            }
+
+            // Algorithm start with "EFLA" is inspired by Po-Han Lin 
+            // and link: http://www.edepot.com 
+            else if (_curAlgorithm == DrawAlgorithm.EFLA_Division)
+            {
+                // Source code of the original algorithm: http://www.edepot.com/linea.html
+
+                bool yLonger = false;
+                int incrementVal;
+
+                float shortLen = _curEnd.y - _curStart.y;
+                float longLen = _curEnd.x - _curStart.x;
+                if (Mathf.Abs(shortLen) > Mathf.Abs(longLen))
+                {
+                    var swap = shortLen;
+                    shortLen = longLen;
+                    longLen = swap;
+                    yLonger = true;
+                }
+
+                int border;
+                if (longLen < 0)
+                {
+                    incrementVal = -1;
+                    border = Mathf.FloorToInt(longLen);
+                }
+                else
+                {
+                    incrementVal = 1;
+                    border = Mathf.CeilToInt(longLen);
+                }
+
+                float divDiff;
+                if (shortLen == 0) divDiff = longLen;
+                else divDiff = longLen / shortLen;
+                if (yLonger)
+                {
+                    for (int i = 0; i != border; i += incrementVal)
+                    {
+                        float keyPointX = _curStart.x + (int)((float)i / divDiff);
+                        float keyPointY = _curStart.y + i;
+                        ColorAGrid(WorldPointToGrid(keyPointX, keyPointY));
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i != border; i += incrementVal)
+                    {
+                        float keyPointX = _curStart.x + i;
+                        float keyPointY = _curStart.y + (int)((float)i / divDiff);
+                        ColorAGrid(WorldPointToGrid(keyPointX, keyPointY));
+                    }
+                }
+            }
+
+            else if (_curAlgorithm == DrawAlgorithm.EFLA_Multiplication)
+            {
+                // Source code of the original algorithm: http://www.edepot.com/lineb.html
+
+                bool yLonger = false;
+                int incrementVal;
+
+                float shortLen = _curEnd.y - _curStart.y;
+                float longLen = _curEnd.x - _curStart.x;
+                if (Mathf.Abs(shortLen) > Mathf.Abs(longLen))
+                {
+                    var swap = shortLen;
+                    shortLen = longLen;
+                    longLen = swap;
+                    yLonger = true;
+                }
+
+                int border;
+                if (longLen < 0)
+                {
+                    incrementVal = -1;
+                    border = Mathf.FloorToInt(longLen);
+                }
+                else
+                {
+                    incrementVal = 1;
+                    border = Mathf.CeilToInt(longLen);
+                }
+
+                float multDiff;
+                if (longLen == 0f) multDiff = shortLen;
+                else multDiff = shortLen / longLen;
+                if (yLonger)
+                {
+                    for (int i = 0; i != border; i += incrementVal)
+                    {
+                        float keyPointX = _curStart.x + (int)((float)i * multDiff);
+                        float keyPointY = _curStart.y + i;
+                        ColorAGrid(WorldPointToGrid(keyPointX, keyPointY));
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i != border; i += incrementVal)
+                    {
+                        float keyPointX = _curStart.x + i;
+                        float keyPointY = _curStart.y + (int)((float)i * multDiff);
+                        ColorAGrid(WorldPointToGrid(keyPointX, keyPointY));
+                    }
+                }
+            }
+
+            else if (_curAlgorithm == DrawAlgorithm.EFLA_Addition)
+            {
+                // Source code of the original algorithm: http://www.edepot.com/linec.html
+
+                bool yLonger = false;
+                int incrementVal, endVal;
+
+                float shortLen = _curEnd.y - _curStart.y;
+                float longLen = _curEnd.x - _curStart.x;
+                if (Mathf.Abs(shortLen) > Mathf.Abs(longLen))
+                {
+                    var swap = shortLen;
+                    shortLen = longLen;
+                    longLen = swap;
+                    yLonger = true;
+                }
+
+                int border;
+                if (longLen < 0)
+                {
+                    incrementVal = -1;
+                    border = Mathf.FloorToInt(longLen);
+                    longLen = -longLen;
+                }
+                else
+                {
+                    incrementVal = 1;
+                    border = Mathf.CeilToInt(longLen);
+                }
+                endVal = border;
+
+                float decInc, j = 0f;
+                if (longLen == 0f) decInc = shortLen;
+                else decInc = shortLen / longLen;
+
+                if (yLonger)
+                {
+                    for (int i = 0; i != endVal; i += incrementVal)
+                    {
+                        float keyPointX = _curStart.x + (int)(j);
+                        float keyPointY = _curStart.y + i;
+                        ColorAGrid(WorldPointToGrid(keyPointX, keyPointY));
+
+                        j += decInc;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i != border; i += incrementVal)
+                    {
+                        float keyPointX = _curStart.x + i;
+                        float keyPointY = _curStart.y + (int)(j);
+                        ColorAGrid(WorldPointToGrid(keyPointX, keyPointY));
+
+                        j += decInc;
                     }
                 }
             }

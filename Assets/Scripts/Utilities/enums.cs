@@ -7,6 +7,8 @@ namespace DrawALine.Enums
 
     public enum DrawAlgorithm
     {
-        Interpolation, Scanning, Connect
+        Interpolation, Scanning,
+        EFLA_Division, EFLA_Multiplication,
+        EFLA_Addition
     }
 }
