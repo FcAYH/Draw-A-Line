@@ -245,7 +245,9 @@ private bool IsLineThroughGrid(int nextGridX, int nextGridY, bool careVertex = f
 其思路与插值法类似，先计算出线段上坐标$\Delta x，\Delta y$的关系$f(\Delta x)$，然后还是假设终点在起点的左边靠上一点$(\Delta x > \Delta y)$，这样子我们每次对x+1，就可以求出来对应的y的值，然后绘制出该点所在的格子就好了。那么问题来了，这个的效率岂不是和插值法相同的？其实确实类似，但是Po-Han Lin的算法的计算量会更小一点，具体介绍一下Division方法，另外两个是类似的思路。
 
 1. 首先根据线段起终点和方向向量，确定较长的边是$\Delta x$ 还是 $\Delta y$ (longLen)以及增长方向(incrementVal)。
+
 2. 计算出y相对x的增长率(divDiff) = longLen / shortLen。
+
 3. i从0到longLen枚举，每次增加incrementVal，如果longLen是$\Delta y$，则$x_i = startX + (int)(i / divDiff), y_i = startY + i$。
 
 Po-Han Lin的代码在这里:[LineA](http://www.edepot.com/linea.html)
