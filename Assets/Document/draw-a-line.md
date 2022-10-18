@@ -99,6 +99,7 @@ for (int i = 0; i < _pointCount; i++)
 首先将起点所在的格子添加到队列中（假设是格子`(x,y)`），再假设线段终点在起点左上方时，则我们只需要去看一下格子`(x + 1, y)`, `(x + 1, y + 1)`, `(x, y + 1)`是不是被该线段穿过，如果穿过了，则将其添加到队列中。这样不断地从队列中拿出格子来，对其右上三个格子做判断，并将符合条件的加入队列，直到走到了终点为止。这样我们就可以把线段穿过的所有格子都求到。
 
 当然，起点和终点的位置关系不同时，要检查的格子是不同的，这里其实一共只有八种方向：
+
 ```
   x,  y
 ( 1,  1) -> 左上
@@ -110,6 +111,7 @@ for (int i = 0; i < _pointCount; i++)
 (-1,  1) -> 右上
 ( 0,  1) -> 上侧
 ```
+
 对于方向`(dirX, dirY)`，对于枚举出的格子`(x, y)`需要去检查`(x + dirX, y)`, `(x + dirX, y + dirY)`, `(x, y + dirY)`三个格子。
 
 接下来就是处理，如何判断线段是否经过一个格子了，这里我采用的方法是，暴力（大雾）。即计算出直线一般表达式，带入格子四个顶点，如果值全大于等于0或者全小于等于0，说明不经过。如果有大于零有小于零，说明经过。
@@ -235,6 +237,67 @@ private bool IsLineThroughGrid(int nextGridX, int nextGridY, bool careVertex = f
 
 ## Extremely Fast Line Algorithm（EFLA）
 
-困了，抽空补上，，
 参考的Po-Han Lin的算法：
 [EFLA](http://www.edepot.com/algorithm.html)
+
+我只实现了基础的三种（Division，Multiplication，Addition）。
+
+其思路与插值法类似，先计算出线段上坐标$\Delta x，\Delta y$的关系$f(\Delta x)$，然后还是假设终点在起点的左边靠上一点$(\Delta x > \Delta y)$，这样子我们每次对x+1，就可以求出来对应的y的值，然后绘制出该点所在的格子就好了。那么问题来了，这个的效率岂不是和插值法相同的？其实确实类似，但是Po-Han Lin的算法的计算量会更小一点，具体介绍一下Division方法，另外两个是类似的思路。
+
+1. 首先根据线段起终点和方向向量，确定较长的边是$\Delta x$ 还是 $\Delta y$ (longLen)以及增长方向(incrementVal)。
+2. 计算出y相对x的增长率(divDiff) = longLen / shortLen。
+3. i从0到longLen枚举，每次增加incrementVal，如果longLen是$\Delta y$，则$x_i = startX + (int)(i / divDiff), y_i = startY + i$。
+
+Po-Han Lin的代码在这里:[LineA](http://www.edepot.com/linea.html)
+
+其实他的代码处理的是线段两个端点都是整数的情况，而我的需求是线段两个端点都是实数的情况，所以做了一些微调：
+
+```csharp
+bool yLonger = false;
+int incrementVal;
+
+// 判断delta X和delta Y 的大小
+float shortLen = _curEnd.y - _curStart.y;
+float longLen = _curEnd.x - _curStart.x;
+if (Mathf.Abs(shortLen) > Mathf.Abs(longLen))
+{
+    var swap = shortLen;
+    shortLen = longLen;
+    longLen = swap;
+    yLonger = true;
+}
+
+int border;
+if (longLen < 0)
+{
+    incrementVal = -1;
+    border = Mathf.FloorToInt(longLen);
+}
+else
+{
+    incrementVal = 1;
+    border = Mathf.CeilToInt(longLen);
+}
+
+float divDiff;
+if (shortLen == 0) divDiff = longLen;
+else divDiff = longLen / shortLen;
+if (yLonger)
+{
+    for (int i = 0; i != border; i += incrementVal)
+    {
+        float keyPointX = _curStart.x + (int)((float)i / divDiff);
+        float keyPointY = _curStart.y + i;
+        ColorAGrid(WorldPointToGrid(keyPointX, keyPointY));
+    }
+}
+else
+{
+    for (int i = 0; i != border; i += incrementVal)
+    {
+        float keyPointX = _curStart.x + i;
+        float keyPointY = _curStart.y + (int)((float)i / divDiff);
+        ColorAGrid(WorldPointToGrid(keyPointX, keyPointY));
+    }
+}
+```
