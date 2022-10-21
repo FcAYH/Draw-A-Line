@@ -65,12 +65,12 @@ namespace DrawALine.Logic
                     point.SetActive(true);
                 }
 
-                for (int i = _pointCount; i < 99; i++)
+                for (int i = _pointCount; i < 100; i++)
                     _pointList[i].SetActive(false);
             }
             else
             {
-                for (int i = 0; i < 99; i++)
+                for (int i = 0; i < 100; i++)
                     _pointList[i].SetActive(false);
             }
         }
